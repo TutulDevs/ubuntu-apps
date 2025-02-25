@@ -159,3 +159,14 @@ sudo apt-get install "fonts-cascadia-code"
 ```sh
 ssh-keygen
 ```
+
+## 15. Remove unnecessary apps
+
+```sh
+sudo apt remove --purge thunderbird libreoffice* remmina -y
+sudo apt autoremove -y && sudo apt clean
+```
+
+## 16. Edge Browser
+
+Go to [Edge](https://www.microsoft.com/en-us/edge/business/download?form=MA13FJ), download the .deb file and run it with App Center.
