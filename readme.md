@@ -136,6 +136,17 @@ yarn --version
 
 Follow [this link](https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-22-04).
 
+Or
+
+```sh
+# install
+sudo apt install redis-server
+
+# check
+sudo systemctl status redis
+redis-cli
+```
+
 ## 11. Postgresql & pgAdmin
 
 Follow [this](https://dev.to/johndotowl/postgresql-17-installation-on-ubuntu-2404-5bfi) for Postgresql.
@@ -170,3 +181,12 @@ sudo apt autoremove -y && sudo apt clean
 ## 16. Edge Browser
 
 Go to [Edge](https://www.microsoft.com/en-us/edge/business/download?form=MA13FJ), download the .deb file and run it with App Center.
+
+
+## 17. Set Monday as the first day of the week
+
+1. Open `sudo nano /usr/share/i18n/locales/en_US` for editing.
+2. Add the line `first_weekday 2` right before the line `END LC_TIME` and Save.
+3. Generate the modified locale: `sudo locale-gen en_US.UTF-8`
+4. Run `sudo update-locale LC_TIME=en_US.UTF-8`
+5. Reboot
