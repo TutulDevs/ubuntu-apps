@@ -4,7 +4,7 @@
 
 Save the below code in a **.sh** file and run that file via terminal.
 
-```sh
+```bash
 #!/bin/bash
 
 installCursor() {
@@ -64,20 +64,20 @@ Visit [VS Code](https://code.visualstudio.com/download) and download the **.deb*
 
 ## 3. Git
 
-```sh
+```bash
 sudo apt update &&
 sudo apt install git &&
 git --version
 ```
 
-```sh
+```bash
 # git flow
 git config --global user.name "tutul"
 git config --global user.email "tutulnahid@gmail.com"
 git config --list
 ```
 
-```sh
+```bash
 sudo apt-get install git-flow
 ```
 
@@ -87,19 +87,19 @@ Visit [Chrome](https://www.google.com/intl/en_pk/chrome/) and download the **.de
 
 ## 5. Brave
 
-```sh
+```bash
 curl -fsS https://dl.brave.com/install.sh | sh
 ```
 
 ## 6. Skype
 
-```sh
+```bash
 sudo snap install skype
 ```
 
 ## 7. gnome shell extensions
 
-```sh
+```bash
 sudo apt install chrome-gnome-shell
 ```
 
@@ -107,7 +107,7 @@ sudo apt install chrome-gnome-shell
 
 Visit [here](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04#option-3-installing-node-using-the-node-version-manager) for more.
 
-```sh
+```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
@@ -126,7 +126,7 @@ npm -v
 
 ## 9. Yarn
 
-```sh
+```bash
 npm install --global yarn
 
 yarn --version
@@ -138,7 +138,7 @@ Follow [this link](https://www.digitalocean.com/community/tutorials/how-to-insta
 
 Or
 
-```sh
+```bash
 # install
 sudo apt install redis-server
 
@@ -155,25 +155,25 @@ Follow [this](https://www.pgadmin.org/download/pgadmin-4-apt/) for pgAdmin.
 
 ## 12. VLC
 
-```sh
+```bash
 sudo snap install vlc
 ```
 
 ## 13. Cascadia Code font
 
-```sh
+```bash
 sudo apt-get install "fonts-cascadia-code"
 ```
 
 ## 14. SSH Key
 
-```sh
+```bash
 ssh-keygen
 ```
 
 ## 15. Remove unnecessary apps
 
-```sh
+```bash
 sudo apt remove --purge thunderbird libreoffice* remmina -y
 sudo apt autoremove -y && sudo apt clean
 ```
@@ -190,3 +190,9 @@ Go to [Edge](https://www.microsoft.com/en-us/edge/business/download?form=MA13FJ)
 3. Generate the modified locale: `sudo locale-gen en_US.UTF-8`
 4. Run `sudo update-locale LC_TIME=en_US.UTF-8`
 5. Reboot
+
+## 18. Heap Limit Fix
+
+```bash
+export NODE_OPTIONS="--max-old-space-size=8192"
+```
