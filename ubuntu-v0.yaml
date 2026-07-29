@@ -7,7 +7,7 @@ autoinstall:
     hostname: lenovo
     username: tutul
     realname: "tutul"
-    password: "$6$rounds=409600$3aK1/7X2mB$L8n.k3jO1E5N6L8x1W4v2Z.3y4X5w6V7u8T9s0R1q2P3O4N5M6L7K8J9I0H1G2F3E4D5C6B7A8"
+    password: "$6$rounds=409600$63GY/Vjp.bY2h6oP$QICec8h75sQ5w.3Jn0Y55WKPHP2Ld8SCGaUbsDQYcDtfoFjPc4egkGsJ7.R7/EFernAVRzJLB1dGjXKm//vwb."
 
   # Regional Settings
   locale: en_US.UTF-8
@@ -19,19 +19,18 @@ autoinstall:
   storage:
     config:
       # Target Disk Definition
-      - id: disk-sda
+      - id: disk-nvme0n1
         type: disk
         match:
-          path: /dev/sda
+          path: /dev/nvme0n1
         wipe: superblock
         ptable: gpt
 
       # 1. /boot Partition (1024 MB - ext4)
       - id: partition-boot
         type: partition
-        device: disk-sda
+        device: disk-nvme0n1
         size: 1024M
-        flag: boot
       - id: format-boot
         type: format
         fstype: ext4
@@ -44,9 +43,10 @@ autoinstall:
       # 2. EFI System Partition (512 MB - fat32)
       - id: partition-efi
         type: partition
-        device: disk-sda
+        device: disk-nvme0n1
         size: 512M
         flag: boot
+        grub_device: true
       - id: format-efi
         type: format
         fstype: fat32
@@ -59,7 +59,7 @@ autoinstall:
       # 3. Swap Partition (32768 MB / 32 GB)
       - id: partition-swap
         type: partition
-        device: disk-sda
+        device: disk-nvme0n1
         size: 32768M
       - id: format-swap
         type: format
@@ -70,11 +70,11 @@ autoinstall:
         path: none
         device: format-swap
 
-      # 4. Root / Partition (~500 GB - ext4)
+      # 4. Root / Partition (~100 GB - ext4)
       - id: partition-root
         type: partition
-        device: disk-sda
-        size: 511999M
+        device: disk-nvme0n1
+        size: 100000M
       - id: format-root
         type: format
         fstype: ext4
@@ -84,10 +84,10 @@ autoinstall:
         path: /
         device: format-root
 
-      # 5. /home Partition (~443 GB - ext4 using remaining space)
+      # 5. /home Partition (~331 GB - ext4 using remaining space)
       - id: partition-home
         type: partition
-        device: disk-sda
+        device: disk-nvme0n1
         size: -1
       - id: format-home
         type: format

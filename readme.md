@@ -1,198 +1,58 @@
 # Ubuntu Setup Guide
 
-## 1. Cursor IDE
+`setup_environment.sh` is a single script that provisions a fresh Ubuntu 24.04 LTS
+machine with the tools and apps below. It's organized as one function per step, all
+called in order from `main()`, so any step can be commented out or re-run on its own.
 
-Save the below code in a **.sh** file and run that file via terminal.
-
-```bash
-#!/bin/bash
-
-installCursor() {
-if ! [ -f /opt/cursor.appimage ]; then
-echo "Installing Cursor AI IDE..."
-
-    # URLs for Cursor AppImage and Icon
-    CURSOR_URL="https://downloader.cursor.sh/linux/appImage/x64"
-    ICON_URL="https://raw.githubusercontent.com/rahuljangirwork/copmany-logos/refs/heads/main/cursor.png"
-
-    # Paths for installation
-    APPIMAGE_PATH="/opt/cursor.appimage"
-    ICON_PATH="/opt/cursor.png"
-    DESKTOP_ENTRY_PATH="/usr/share/applications/cursor.desktop"
-
-    # Install curl if not installed
-    if ! command -v curl &> /dev/null; then
-        echo "curl is not installed. Installing..."
-        sudo apt-get update
-        sudo apt-get install -y curl
-    fi
-
-    # Download Cursor AppImage
-    echo "Downloading Cursor AppImage..."
-    sudo curl -L $CURSOR_URL -o $APPIMAGE_PATH
-    sudo chmod +x $APPIMAGE_PATH
-
-    # Download Cursor icon
-    echo "Downloading Cursor icon..."
-    sudo curl -L $ICON_URL -o $ICON_PATH
-
-    # Create a .desktop entry for Cursor
-    echo "Creating .desktop entry for Cursor..."
-    sudo bash -c "cat > $DESKTOP_ENTRY_PATH" <<EOL
-
-[Desktop Entry]
-Name=Cursor AI IDE
-Exec=$APPIMAGE_PATH --no-sandbox
-Icon=$ICON_PATH
-Type=Application
-Categories=Development;
-EOL
-
-    echo "Cursor AI IDE installation complete. You can find it in your application menu."
-else
-    echo "Cursor AI IDE is already installed."
-fi
-
-}
-
-installCursor
-```
-
-## 2. VS Code
-
-Visit [VS Code](https://code.visualstudio.com/download) and download the **.deb** file. Install it with App Center. Try to avoid installing with Snap.
-
-## 3. Git
+## Usage
 
 ```bash
-sudo apt update &&
-sudo apt install git &&
-git --version
+chmod +x setup_environment.sh
+./setup_environment.sh
 ```
 
-```bash
-# git flow
-git config --global user.name "tutul"
-git config --global user.email "tutulnahid@gmail.com"
-git config --list
-```
+Notes:
 
-```bash
-sudo apt-get install git-flow
-```
+- Requires `sudo` — you'll be prompted for your password.
+- Safe to re-run; steps check for existing installs/config where it matters
+  (NVM, SSH key, locale, heap limit) instead of redoing them.
+- No Snap packages are used anywhere in the script — everything installs via
+  `apt`, an official vendor repo, or a direct download.
+- Log out and back in after running so the Docker group membership takes effect.
 
-## 4. Google Chrome
+## What gets installed
 
-Visit [Chrome](https://www.google.com/intl/en_pk/chrome/) and download the **.deb** file. Install it with App Center.
+| # | Step | Notes |
+|---|------|-------|
+| 1 | System update | `apt update` |
+| 2 | Git & Git Flow | Sets global `user.name`/`user.email` — edit `installGit()` first if these aren't yours |
+| 3 | NVM & Node.js 20 | Installs NVM, then Node 20 as the default |
+| 4 | PostgreSQL | Enables and starts the service |
+| 5 | pgAdmin 4 (Web) | Run `sudo /usr/pgadmin4/bin/setup-web.sh` afterward to set credentials |
+| 6 | Redis | Configured to daemonize, enabled and started |
+| 7 | Docker Engine | Installs via Docker's official apt repo; adds current user to `docker` group |
+| 8 | GParted | |
+| 9 | Claude Code CLI | |
+| 10 | Cheese | Webcam app |
+| 11 | CPU-X | |
+| 12 | Gnumeric | |
+| 13 | Cursor AI IDE | **Disabled by default** (call is commented out in `main()`) — uncomment `installCursor` to enable |
+| 14 | VS Code | Downloaded `.deb` from Microsoft, installed via `dpkg` |
+| 15 | Google Chrome | Downloaded `.deb` from Google, installed via `dpkg` |
+| 16 | Brave Browser | Official install script |
+| 17 | Microsoft Edge | Installs via Microsoft's official apt repo |
+| 18 | GNOME Shell Extensions support | `chrome-gnome-shell` |
+| 19 | Yarn | Installed globally via npm (depends on step 3) |
+| 20 | VLC | |
+| 21 | Cascadia Code font | |
+| 22 | SSH key | `ed25519`, no passphrase, skipped if `~/.ssh/id_ed25519` already exists |
+| 23 | Remove unnecessary apps | Purges Thunderbird, LibreOffice, Remmina |
+| 24 | Monday as first day of week | Patches the `en_US` locale and regenerates it — reboot to apply |
+| 25 | Node.js heap limit fix | Adds `NODE_OPTIONS="--max-old-space-size=8192"` to `~/.bashrc` |
 
-## 5. Brave
+## Customizing
 
-```bash
-curl -fsS https://dl.brave.com/install.sh | sh
-```
-
-## 6. Skype
-
-```bash
-sudo snap install skype
-```
-
-## 7. gnome shell extensions
-
-```bash
-sudo apt install chrome-gnome-shell
-```
-
-## 8. Nodejs with NVM
-
-Visit [here](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04#option-3-installing-node-using-the-node-version-manager) for more.
-
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh
-
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-
-source ~/.bashrc
-
-nvm list-remote
-
-nvm install v20.18.0
-
-nvm list
-
-node -v
-npm -v
-```
-
-## 9. Yarn
-
-```bash
-npm install --global yarn
-
-yarn --version
-```
-
-## 10. Redis
-
-Follow [this link](https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-22-04).
-
-Or
-
-```bash
-# install
-sudo apt install redis-server
-
-# check
-sudo systemctl status redis
-redis-cli
-```
-
-## 11. Postgresql & pgAdmin
-
-Follow [this](https://dev.to/johndotowl/postgresql-17-installation-on-ubuntu-2404-5bfi) for Postgresql.
-
-Follow [this](https://www.pgadmin.org/download/pgadmin-4-apt/) for pgAdmin.
-
-## 12. VLC
-
-```bash
-sudo snap install vlc
-```
-
-## 13. Cascadia Code font
-
-```bash
-sudo apt-get install "fonts-cascadia-code"
-```
-
-## 14. SSH Key
-
-```bash
-ssh-keygen
-```
-
-## 15. Remove unnecessary apps
-
-```bash
-sudo apt remove --purge thunderbird libreoffice* remmina -y
-sudo apt autoremove -y && sudo apt clean
-```
-
-## 16. Edge Browser
-
-Go to [Edge](https://www.microsoft.com/en-us/edge/business/download?form=MA13FJ), download the .deb file and run it with App Center.
-
-
-## 17. Set Monday as the first day of the week
-
-1. Open `sudo nano /usr/share/i18n/locales/en_US` for editing.
-2. Add the line `first_weekday 2` right before the line `END LC_TIME` and Save.
-3. Generate the modified locale: `sudo locale-gen en_US.UTF-8`
-4. Run `sudo update-locale LC_TIME=en_US.UTF-8`
-5. Reboot
-
-## 18. Heap Limit Fix
-
-```bash
-export NODE_OPTIONS="--max-old-space-size=8192"
-```
+Each step is a standalone function. To skip a step, comment out its call inside
+`main()` (as already done for `installCursor`). The script calls `main` unconditionally
+when run, so sourcing the file will execute every step — there's no separate
+opt-in flag for running a single function in isolation.
