@@ -21,7 +21,15 @@ updateSystem() {
     sudo apt update -y
 }
 
-# 2. Install Git and configure
+# 2. Install curl
+installCurl() {
+    log_info "Installing curl..."
+    sudo apt install -y curl
+    curl --version
+    log_success "curl installed successfully."
+}
+
+# 3. Install Git and configure
 installGit() {
     log_info "Installing Git & Git Flow..."
     sudo apt install -y git git-flow
@@ -32,7 +40,7 @@ installGit() {
     log_success "Git configured successfully."
 }
 
-# 3. Install NVM & Node.js (v20)
+# 4. Install NVM & Node.js (v20)
 installNvmNode() {
     log_info "Installing NVM & Node.js..."
     if [ ! -d "$HOME/.nvm" ]; then
@@ -50,7 +58,7 @@ installNvmNode() {
     log_success "NVM & Node.js installed successfully."
 }
 
-# 4. Install PostgreSQL
+# 5. Install PostgreSQL
 installPostgres() {
     log_info "Installing PostgreSQL..."
     sudo apt install -y postgresql postgresql-contrib
@@ -59,7 +67,7 @@ installPostgres() {
     log_success "PostgreSQL installed and service started."
 }
 
-# 5. Install pgAdmin 4 Web
+# 6. Install pgAdmin 4 Web
 installPgAdminWeb() {
     log_info "Installing pgAdmin 4 (Web)..."
     sudo apt install -y curl gnupg
@@ -71,7 +79,7 @@ installPgAdminWeb() {
     log_success "pgAdmin 4 installation completed."
 }
 
-# 6. Install Redis Server
+# 7. Install Redis Server
 installRedis() {
     log_info "Installing Redis Server..."
     sudo apt install -y redis-server
@@ -83,7 +91,7 @@ installRedis() {
     log_success "Redis installed and service started."
 }
 
-# 7. Install Docker Engine
+# 8. Install Docker Engine
 installDocker() {
     log_info "Installing Docker..."
     sudo apt install -y ca-certificates curl gnupg
@@ -97,48 +105,57 @@ installDocker() {
       sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
     sudo apt update -y
-    sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-compose
 
     sudo usermod -aG docker "$USER"
+    docker compose version
+    docker-compose --version
     log_success "Docker installed. User added to 'docker' group."
 }
 
-# 8. Install GParted
+# 9. Install GParted
 installGparted() {
     log_info "Installing GParted..."
     sudo apt install -y gparted
     log_success "GParted installed successfully."
 }
 
-# 9. Install Claude Code CLI
+# 10. Install Claude Code CLI
 installClaudeCode() {
     log_info "Installing Claude Code CLI..."
     curl -fsSL https://claude.ai/install.sh | bash
     log_success "Claude Code CLI installed successfully."
 }
 
-# 10. Install Cheese
+# 11. Install OpenCode CLI
+installOpencode() {
+    log_info "Installing OpenCode CLI..."
+    curl -fsSL https://opencode.ai/install | bash
+    log_success "OpenCode CLI installed successfully."
+}
+
+# 12. Install Cheese
 installCheese() {
     log_info "Installing Cheese webcam application..."
     sudo apt install -y cheese
     log_success "Cheese installed successfully."
 }
 
-# 11. Install CPU-X
+# 13. Install CPU-X
 installCpuX() {
     log_info "Installing CPU-X..."
     sudo apt install -y cpu-x
     log_success "CPU-X installed successfully."
 }
 
-# 12. Install Gnumeric
+# 14. Install Gnumeric
 installGnumeric() {
     log_info "Installing Gnumeric..."
     sudo apt install -y gnumeric
     log_success "Gnumeric installed successfully."
 }
 
-# 13. Install Cursor AI IDE
+# 15. Install Cursor AI IDE
 installCursor() {
     log_info "Installing Cursor AI IDE..."
     if [ -f /opt/cursor.appimage ]; then
@@ -166,7 +183,7 @@ Categories=Development;" | sudo tee "$desktop_entry_path" > /dev/null
     log_success "Cursor AI IDE installed successfully."
 }
 
-# 14. Install VS Code
+# 16. Install VS Code
 installVSCode() {
     log_info "Installing VS Code..."
     wget -O /tmp/vscode.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
@@ -175,7 +192,7 @@ installVSCode() {
     log_success "VS Code installed successfully."
 }
 
-# 15. Install Google Chrome
+# 17. Install Google Chrome
 installChrome() {
     log_info "Installing Google Chrome..."
     wget -O /tmp/chrome.deb "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
@@ -184,14 +201,14 @@ installChrome() {
     log_success "Google Chrome installed successfully."
 }
 
-# 16. Install Brave Browser
+# 18. Install Brave Browser
 installBrave() {
     log_info "Installing Brave Browser..."
     curl -fsS https://dl.brave.com/install.sh | sh
     log_success "Brave Browser installed successfully."
 }
 
-# 17. Install Microsoft Edge
+# 19. Install Microsoft Edge
 installMsEdge() {
     log_info "Installing Microsoft Edge..."
     sudo apt install -y curl gnupg
@@ -202,14 +219,14 @@ installMsEdge() {
     log_success "Microsoft Edge installed successfully."
 }
 
-# 18. Install GNOME Shell Extensions support
+# 20. Install GNOME Shell Extensions support
 installGNOMEExtensions() {
     log_info "Installing GNOME Shell Extensions support..."
     sudo apt install -y chrome-gnome-shell
     log_success "GNOME Shell Extensions support installed successfully."
 }
 
-# 19. Install Yarn
+# 21. Install Yarn
 installYarn() {
     log_info "Installing Yarn..."
     export NVM_DIR="$HOME/.nvm"
@@ -219,21 +236,21 @@ installYarn() {
     log_success "Yarn installed successfully."
 }
 
-# 20. Install VLC
+# 22. Install VLC
 installVLC() {
     log_info "Installing VLC..."
     sudo apt install -y vlc
     log_success "VLC installed successfully."
 }
 
-# 21. Install Cascadia Code Font
+# 23. Install Cascadia Code Font
 installFont() {
     log_info "Installing Cascadia Code font..."
     sudo apt-get install -y fonts-cascadia-code
     log_success "Cascadia Code font installed successfully."
 }
 
-# 22. Generate SSH Key
+# 24. Generate SSH Key
 generateSSHKey() {
     log_info "Generating SSH key..."
     if [ -f "$HOME/.ssh/id_ed25519" ]; then
@@ -244,7 +261,7 @@ generateSSHKey() {
     log_success "SSH key generated at ~/.ssh/id_ed25519."
 }
 
-# 23. Remove unnecessary apps
+# 25. Remove unnecessary apps
 removeUnnecessaryApps() {
     log_info "Removing unnecessary apps..."
     sudo apt remove --purge -y thunderbird libreoffice* remmina || true
@@ -253,7 +270,7 @@ removeUnnecessaryApps() {
     log_success "Unnecessary apps removed successfully."
 }
 
-# 24. Set Monday as the first day of the week
+# 26. Set Monday as the first day of the week
 setMondayFirstWeekday() {
     log_info "Setting Monday as the first day of the week..."
     local locale_file="/usr/share/i18n/locales/en_US"
@@ -267,7 +284,7 @@ setMondayFirstWeekday() {
     log_success "Monday set as the first day of the week. Reboot to apply."
 }
 
-# 25. Node.js heap limit fix
+# 27. Node.js heap limit fix
 setNodeHeapLimit() {
     log_info "Setting Node.js heap limit..."
     local export_line='export NODE_OPTIONS="--max-old-space-size=8192"'
@@ -283,6 +300,7 @@ main() {
     log_info "Starting environment setup..."
     
     updateSystem
+    installCurl
     installGit
     installNvmNode
     installPostgres
@@ -291,6 +309,7 @@ main() {
     installDocker
     installGparted
     installClaudeCode
+    installOpencode
     installCheese
     installCpuX
     installGnumeric
