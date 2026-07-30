@@ -7,7 +7,7 @@ autoinstall:
     hostname: lenovo
     username: tutul
     realname: "tutul"
-    password: "$6$rounds=409600$63GY/Vjp.bY2h6oP$QICec8h75sQ5w.3Jn0Y55WKPHP2Ld8SCGaUbsDQYcDtfoFjPc4egkGsJ7.R7/EFernAVRzJLB1dGjXKm//vwb."
+    password: "$6$rounds=409600$9EilctNXi4RG7Xwe$EsZSvsDmt4oAoN3FMzDAzHrxdr4s5Ni9rUXZC1DuwtyFH0ON8nnMEoiI/WwOD9cDkna0F6MMdBfSPG85n3fQK."
 
   # Regional Settings
   locale: en_US.UTF-8
@@ -15,7 +15,7 @@ autoinstall:
   keyboard:
     layout: us
 
-  # Explicit Custom Partition Scheme on /dev/sda
+  # Explicit Custom Partition Scheme on /dev/nvme0n1
   storage:
     config:
       # Target Disk Definition
@@ -26,7 +26,23 @@ autoinstall:
         wipe: superblock
         ptable: gpt
 
-      # 1. /boot Partition (1024 MB - ext4)
+      # 1. EFI System Partition (1536 MB / 1.5 GB - fat32)
+      - id: partition-efi
+        type: partition
+        device: disk-nvme0n1
+        size: 1536M
+        flag: boot
+        grub_device: true
+      - id: format-efi
+        type: format
+        fstype: fat32
+        volume: partition-efi
+      - id: mount-efi
+        type: mount
+        path: /boot/efi
+        device: format-efi
+
+      # 2. /boot Partition (1024 MB - ext4)
       - id: partition-boot
         type: partition
         device: disk-nvme0n1
@@ -40,27 +56,11 @@ autoinstall:
         path: /boot
         device: format-boot
 
-      # 2. EFI System Partition (512 MB - fat32)
-      - id: partition-efi
-        type: partition
-        device: disk-nvme0n1
-        size: 512M
-        flag: boot
-        grub_device: true
-      - id: format-efi
-        type: format
-        fstype: fat32
-        volume: partition-efi
-      - id: mount-efi
-        type: mount
-        path: /boot/efi
-        device: format-efi
-
-      # 3. Swap Partition (32768 MB / 32 GB)
+      # 3. Swap Partition (16384 MB / 16 GB)
       - id: partition-swap
         type: partition
         device: disk-nvme0n1
-        size: 32768M
+        size: 16384M
       - id: format-swap
         type: format
         fstype: swap
@@ -84,7 +84,22 @@ autoinstall:
         path: /
         device: format-root
 
-      # 5. /home Partition (~331 GB - ext4 using remaining space)
+      # 5. /projects Partition (250 GB - ext4, must be allocated before /home
+      #    since /home takes all remaining space)
+      - id: partition-projects
+        type: partition
+        device: disk-nvme0n1
+        size: 250000M
+      - id: format-projects
+        type: format
+        fstype: ext4
+        volume: partition-projects
+      - id: mount-projects
+        type: mount
+        path: /projects
+        device: format-projects
+
+      # 6. /home Partition (remaining space - ext4)
       - id: partition-home
         type: partition
         device: disk-nvme0n1
