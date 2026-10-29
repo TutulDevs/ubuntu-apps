@@ -1,0 +1,117 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  # System Identity & User Creation
+  identity:
+    hostname: itech
+    username: itech
+    realname: "itech"
+    password: "$6$ROSY6dUEw1Aq38lv$QBh6o1kmpkBf0nmKO5.VLgpclOP4WS3EGRfnKPVvWhdD6Glx3xKCw7S1E7s2egZSS/QxySDDAusOWoRyDo8O51"
+
+  # Regional Settings (mirrors current system: LANG=en_GB, us keyboard)
+  locale: en_GB.UTF-8
+  timezone: Asia/Dhaka
+  keyboard:
+    layout: us
+
+  # Explicit Custom Partition Scheme on /dev/sda (256 GB SATA SSD, UEFI)
+  storage:
+    config:
+      # Target Disk Definition
+      - id: disk-sda
+        type: disk
+        match:
+          path: /dev/sda
+        wipe: superblock
+        ptable: gpt
+
+      # 1. EFI System Partition (1536 MB / 1.5 GB - fat32)
+      - id: partition-efi
+        type: partition
+        device: disk-sda
+        size: 1536M
+        flag: boot
+        grub_device: true
+      - id: format-efi
+        type: format
+        fstype: fat32
+        volume: partition-efi
+      - id: mount-efi
+        type: mount
+        path: /boot/efi
+        device: format-efi
+
+      # 2. /boot Partition (1024 MB - ext4)
+      - id: partition-boot
+        type: partition
+        device: disk-sda
+        size: 1024M
+      - id: format-boot
+        type: format
+        fstype: ext4
+        volume: partition-boot
+      - id: mount-boot
+        type: mount
+        path: /boot
+        device: format-boot
+
+      # 3. Swap Partition (16384 MB / 16 GB - covers 12 GB RAM incl. hibernate)
+      - id: partition-swap
+        type: partition
+        device: disk-sda
+        size: 16384M
+      - id: format-swap
+        type: format
+        fstype: swap
+        volume: partition-swap
+      - id: mount-swap
+        type: mount
+        path: none
+        device: format-swap
+
+      # 4. Root / Partition (~100 GB - ext4)
+      - id: partition-root
+        type: partition
+        device: disk-sda
+        size: 100000M
+      - id: format-root
+        type: format
+        fstype: ext4
+        volume: partition-root
+      - id: mount-root
+        type: mount
+        path: /
+        device: format-root
+
+      # 5. /home Partition (remaining space, ~120 GB - ext4)
+      - id: partition-home
+        type: partition
+        device: disk-sda
+        size: -1
+      - id: format-home
+        type: format
+        fstype: ext4
+        volume: partition-home
+      - id: mount-home
+        type: mount
+        path: /home
+        device: format-home
+
+  # Software Packages & System Type
+  packages:
+    - ubuntu-desktop
+    - git
+    - openssh-server
+
+  # SSH Access Options
+  ssh:
+    install-server: true
+    allow-pw: true
+
+  # Ensure System Boots into GUI Desktop
+  late-commands:
+    - curtin in-target -- systemctl set-default graphical.target
+
+  # Post-install Action
+  shutdown: reboot
