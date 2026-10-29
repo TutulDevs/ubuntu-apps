@@ -40,7 +40,7 @@ installGit() {
     log_success "Git configured successfully."
 }
 
-# 4. Install NVM & Node.js (v20)
+# 4. Install NVM & Node.js (v24.15.0)
 installNvmNode() {
     log_info "Installing NVM & Node.js..."
     if [ ! -d "$HOME/.nvm" ]; then
@@ -50,9 +50,9 @@ installNvmNode() {
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-    nvm install 20
-    nvm use 20
-    nvm alias default 20
+    nvm install 24.15.0
+    nvm use 24.15.0
+    nvm alias default 24.15.0
     node -v
     npm -v
     log_success "NVM & Node.js installed successfully."
@@ -127,35 +127,58 @@ installClaudeCode() {
     log_success "Claude Code CLI installed successfully."
 }
 
-# 11. Install OpenCode CLI
+# 11. Install Claude Desktop (beta on Linux)
+installClaudeDesktop() {
+    log_info "Installing Claude Desktop..."
+    sudo apt install -y curl gnupg
+    sudo curl -fsSLo /usr/share/keyrings/claude-desktop-archive-keyring.asc https://downloads.claude.ai/claude-desktop/key.asc
+    echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/claude-desktop-archive-keyring.asc] https://downloads.claude.ai/claude-desktop/apt/stable stable main" | \
+        sudo tee /etc/apt/sources.list.d/claude-desktop.list > /dev/null
+    sudo apt update -y
+    sudo apt install -y claude-desktop
+    # Cowork runs tasks in a KVM-backed VM and needs kvm group access
+    sudo usermod -aG kvm "$USER"
+    log_success "Claude Desktop installed. Launch 'Claude' from the app menu and sign in."
+}
+
+# 12. Install Command Code CLI
+installCommandCodeCli() {
+    log_info "Installing Command Code CLI..."
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    npm install --global command-code
+    log_success "Command Code CLI installed successfully. Run 'cmd' in a project to start."
+}
+
+# 13. Install Command Code Desktop (Ubuntu/Debian x64 only)
+installCommandCodeDesktop() {
+    log_info "Installing Command Code Desktop..."
+    curl -fsSL https://raw.githubusercontent.com/CommandCodeAI/desktop/main/install.sh | bash
+    log_success "Command Code Desktop installed successfully."
+}
+
+# 14. Install OpenCode CLI
 installOpencode() {
     log_info "Installing OpenCode CLI..."
     curl -fsSL https://opencode.ai/install | bash
     log_success "OpenCode CLI installed successfully."
 }
 
-# 12. Install Cheese
-installCheese() {
-    log_info "Installing Cheese webcam application..."
-    sudo apt install -y cheese
-    log_success "Cheese installed successfully."
-}
-
-# 13. Install CPU-X
+# 15. Install CPU-X
 installCpuX() {
     log_info "Installing CPU-X..."
     sudo apt install -y cpu-x
     log_success "CPU-X installed successfully."
 }
 
-# 14. Install Gnumeric
+# 16. Install Gnumeric
 installGnumeric() {
     log_info "Installing Gnumeric..."
     sudo apt install -y gnumeric
     log_success "Gnumeric installed successfully."
 }
 
-# 15. Install Cursor AI IDE
+# 17. Install Cursor AI IDE
 installCursor() {
     log_info "Installing Cursor AI IDE..."
     if [ -f /opt/cursor.appimage ]; then
@@ -183,7 +206,7 @@ Categories=Development;" | sudo tee "$desktop_entry_path" > /dev/null
     log_success "Cursor AI IDE installed successfully."
 }
 
-# 16. Install VS Code
+# 18. Install VS Code
 installVSCode() {
     log_info "Installing VS Code..."
     wget -O /tmp/vscode.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
@@ -192,7 +215,7 @@ installVSCode() {
     log_success "VS Code installed successfully."
 }
 
-# 17. Install Google Chrome
+# 19. Install Google Chrome
 installChrome() {
     log_info "Installing Google Chrome..."
     wget -O /tmp/chrome.deb "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
@@ -201,14 +224,14 @@ installChrome() {
     log_success "Google Chrome installed successfully."
 }
 
-# 18. Install Brave Browser
+# 20. Install Brave Browser
 installBrave() {
     log_info "Installing Brave Browser..."
     curl -fsS https://dl.brave.com/install.sh | sh
     log_success "Brave Browser installed successfully."
 }
 
-# 19. Install Microsoft Edge
+# 21. Install Microsoft Edge
 installMsEdge() {
     log_info "Installing Microsoft Edge..."
     sudo apt install -y curl gnupg
@@ -219,14 +242,14 @@ installMsEdge() {
     log_success "Microsoft Edge installed successfully."
 }
 
-# 20. Install GNOME Shell Extensions support
+# 22. Install GNOME Shell Extensions support
 installGNOMEExtensions() {
     log_info "Installing GNOME Shell Extensions support..."
     sudo apt install -y chrome-gnome-shell
     log_success "GNOME Shell Extensions support installed successfully."
 }
 
-# 21. Install Yarn
+# 23. Install Yarn
 installYarn() {
     log_info "Installing Yarn..."
     export NVM_DIR="$HOME/.nvm"
@@ -236,21 +259,31 @@ installYarn() {
     log_success "Yarn installed successfully."
 }
 
-# 22. Install VLC
+# 24. Install pnpm
+installPnpm() {
+    log_info "Installing pnpm..."
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    npm install --global pnpm
+    pnpm --version
+    log_success "pnpm installed successfully."
+}
+
+# 25. Install VLC
 installVLC() {
     log_info "Installing VLC..."
     sudo apt install -y vlc
     log_success "VLC installed successfully."
 }
 
-# 23. Install Cascadia Code Font
+# 26. Install Cascadia Code Font
 installFont() {
     log_info "Installing Cascadia Code font..."
     sudo apt-get install -y fonts-cascadia-code
     log_success "Cascadia Code font installed successfully."
 }
 
-# 24. Generate SSH Key
+# 27. Generate SSH Key
 generateSSHKey() {
     log_info "Generating SSH key..."
     if [ -f "$HOME/.ssh/id_ed25519" ]; then
@@ -261,7 +294,7 @@ generateSSHKey() {
     log_success "SSH key generated at ~/.ssh/id_ed25519."
 }
 
-# 25. Remove unnecessary apps
+# 28. Remove unnecessary apps
 removeUnnecessaryApps() {
     log_info "Removing unnecessary apps..."
     sudo apt remove --purge -y thunderbird libreoffice* remmina || true
@@ -270,7 +303,7 @@ removeUnnecessaryApps() {
     log_success "Unnecessary apps removed successfully."
 }
 
-# 26. Set Monday as the first day of the week
+# 29. Set Monday as the first day of the week
 setMondayFirstWeekday() {
     log_info "Setting Monday as the first day of the week..."
     local locale_file="/usr/share/i18n/locales/en_US"
@@ -284,7 +317,7 @@ setMondayFirstWeekday() {
     log_success "Monday set as the first day of the week. Reboot to apply."
 }
 
-# 27. Node.js heap limit fix
+# 30. Node.js heap limit fix
 setNodeHeapLimit() {
     log_info "Setting Node.js heap limit..."
     local export_line='export NODE_OPTIONS="--max-old-space-size=8192"'
@@ -309,8 +342,10 @@ main() {
     installDocker
     installGparted
     installClaudeCode
-    installOpencode
-    installCheese
+    installClaudeDesktop
+    # installCommandCodeCli
+    # installCommandCodeDesktop
+    # installOpencode
     installCpuX
     installGnumeric
     # installCursor
@@ -320,6 +355,7 @@ main() {
     installMsEdge
     installGNOMEExtensions
     installYarn
+    installPnpm
     installVLC
     installFont
     generateSSHKey
